@@ -55,7 +55,7 @@ const calc = ({ montante, porcento, imposto, tempo, saidas, entradas }) => {
     )}`
   );
 
-  if (res < 0 || diferenca < 0) {
+  if (res < 0 || res < montante) {
     log("");
     log("Resultado: Prejuizo");
   } else {
