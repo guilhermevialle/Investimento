@@ -1,4 +1,4 @@
-const log = require("./log");
+const log = (...args) => console.log(...args)
 
 const getRandomInt = (min, max) => {
   min = Math.ceil(min);
