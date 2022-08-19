@@ -1,5 +1,27 @@
 const print = (...args) => console.log(...args)
 
+const tabelaIOF = () => {
+  let y = 3
+  let counter = 0
+  let tabela = []
+
+  for (let x = 99; x > -1; x -= y) {
+    if (counter == 3) {
+      counter = 0
+      y = 4
+    }
+    else {
+      y = 3
+    }
+
+    counter++
+    tabela.push(x)
+  }
+
+  tabela.shift()
+  return tabela
+}
+
 const formatarMeses = (meses) => {
   anos = -1
   months = 0
@@ -41,8 +63,6 @@ const formatarMeses = (meses) => {
   }
 }
 
-print(formatarMeses(24))
-
 const getRandomInt = (min, max) => {
   min = Math.ceil(min);
   max = Math.floor(max);
@@ -63,6 +83,13 @@ const calc = ({ montante, porcento, imposto, tempo, saidas, entradas, divida, te
   print("");
 
   for (let x = 1; x <= tempo; x++) {
+    diaDoSaque = getRandomInt(0, 31)
+    IOF = tabelaIOF()[diaDoSaque] / 100
+
+    if (IOF == undefined || isNaN(IOF)) {
+      IOF = 0
+    }
+
     anterior = res.toFixed(2);
     xMensal = getRandomInt(saidas.min, saidas.max);
     xMensalEntrada = getRandomInt(entradas.min, entradas.max);
@@ -71,20 +98,23 @@ const calc = ({ montante, porcento, imposto, tempo, saidas, entradas, divida, te
     res -= xMensal;
     res += xMensalEntrada;
 
-    if (tempoEstimado) {
+    if (tempoEstimado && divida.valor != 0) {
       if (rendimento > divida.valor) {
         print("Você quitou sua divida")
         print(`Tempo estimado: ${formatarMeses(x - 1)}`)
         break
-        return
       }
     }
 
     print(`${formatarMeses(x)}:`);
     print(`Saidas: R$ ${xMensal} | Entradas: R$ ${xMensalEntrada}`);
     retorno = res * porcento
-    retorno -= retorno * imposto
-    print(`Retorno liquido: R$ ${retorno.toFixed(2)}`);
+    print(`Dia do saque: ${diaDoSaque + 1}`)
+    print(`IOF: R$ -${(retorno * IOF).toFixed(2)} | IR: R$ -${(retorno * imposto).toFixed(2)} de R$ ${retorno.toFixed(2)} retornado`)
+    taxaIOF = retorno * IOF
+    taxaIR = retorno * imposto
+    retorno -= taxaIR + taxaIOF
+    print(`Retorno liquido (com taxas): R$ ${retorno.toFixed(2)}`);
     rendimento += retorno
     res += retorno;
     print(`Acumulo: R$ ${res.toFixed(2)}`);
@@ -122,21 +152,22 @@ const calc = ({ montante, porcento, imposto, tempo, saidas, entradas, divida, te
 };
 
 calc({
-  montante: 100000,
-  porcento: (13.65 / 12) + (0.65 / 12),
+  montante: 1500,
+  porcento: 11.2 / 12,
   imposto: 22.5,
-  tempo: 30,
+  tempo: 12,
+  min: 0,
   saidas: {
-    min: 250,
-    max: 500,
+    min: 1,
+    max: 13,
   },
   entradas: {
-    min: 2500,
-    max: 2900,
+    min: 0,
+    max: 0,
   },
   divida: {
-    valor: 35000,
-    juros: 16.6 / 12
+    valor: 0,
+    juros: 0
   },
   tempoEstimado: true
 });
