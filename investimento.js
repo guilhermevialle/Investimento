@@ -23,8 +23,8 @@ const tabelaIOF = () => {
 }
 
 const formatarMeses = (meses) => {
-  anos = -1
-  months = 0
+  let anos = -1
+  let months = 0
 
   for (let x = 0; x <= meses; x += 12) {
     anos++
@@ -83,11 +83,16 @@ const calc = ({ montante, porcento, imposto, tempo, saidas, entradas, divida, te
   print("");
 
   for (let x = 1; x <= tempo; x++) {
-    diaDoSaque = getRandomInt(0, 31)
-    IOF = tabelaIOF()[diaDoSaque] / 100
+    IOF = 0
+    let diaDoSaque = false
 
-    if (IOF == undefined || isNaN(IOF)) {
-      IOF = 0
+    if (saidas.min > 0 || saidas.max > 0) {
+      diaDoSaque = getRandomInt(0, 31)
+      IOF = tabelaIOF()[diaDoSaque] / 100
+
+      if (IOF == undefined || isNaN(IOF)) {
+        IOF = 0
+      }
     }
 
     anterior = res.toFixed(2);
@@ -109,8 +114,8 @@ const calc = ({ montante, porcento, imposto, tempo, saidas, entradas, divida, te
     print(`${formatarMeses(x)}:`);
     print(`Saidas: R$ ${xMensal} | Entradas: R$ ${xMensalEntrada}`);
     retorno = res * porcento
-    print(`Dia do saque: ${diaDoSaque + 1}`)
-    print(`IOF: R$ -${(retorno * IOF).toFixed(2)} | IR: R$ -${(retorno * imposto).toFixed(2)} de R$ ${retorno.toFixed(2)} retornado`)
+    diaDoSaque ? print(`Dia do saque: ${diaDoSaque + 1}`) : false
+    print(`IOF: R$ -${(retorno * IOF).toFixed(2)} | IR: R$ -${(retorno * imposto).toFixed(2)} de R$ ${retorno.toFixed(2)} do CDI`)
     taxaIOF = retorno * IOF
     taxaIR = retorno * imposto
     retorno -= taxaIR + taxaIOF
@@ -137,7 +142,7 @@ const calc = ({ montante, porcento, imposto, tempo, saidas, entradas, divida, te
   print(`Entradas total: R$ ${entradaTotal.toFixed(2)}`);
   print(`Saldo entre entradas e saidas: R$ ${diferenca.toFixed(2)}`);
   print(
-    `Seu dinheiro valia R$ ${montante} ha ${formatarMeses(tempo)} atras. Agora equivale a: R$ ${res.toFixed(
+    `Voce possuia R$ ${montante} ha ${formatarMeses(tempo)} atras e Agora R$ ${res.toFixed(
       2
     )}`
   );
@@ -152,18 +157,18 @@ const calc = ({ montante, porcento, imposto, tempo, saidas, entradas, divida, te
 };
 
 calc({
-  montante: 1500,
+  montante: 0,
   porcento: 11.2 / 12,
   imposto: 22.5,
-  tempo: 12,
+  tempo: 6,
   min: 0,
   saidas: {
-    min: 1,
-    max: 13,
+    min: 30,
+    max: 75,
   },
   entradas: {
-    min: 0,
-    max: 0,
+    min: 250.50,
+    max: 607.32,
   },
   divida: {
     valor: 0,
